@@ -45,5 +45,5 @@
 			<div class="score">{scaleNames[day.score]}</div>
 		</li>
 	{/each}
-	{#if history.length == 0}You haven't reported your mood{/if}
+	{#if history.length == 0}You haven't reported your mood earlier days{/if}
 </ul>

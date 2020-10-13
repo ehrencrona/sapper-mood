@@ -1,38 +1,50 @@
-<script context="module" lang="ts">
-	import type { Preload } from "@sapper/common";
-	import SentimentHistory from "../components/SentimentHistory.svelte";
-
-	export const preload: Preload = async function (this, page, session) {
-		const res = await this.fetch(`/api/sentiment`);
-
-		return await res.json();
-	};
-</script>
-
 <script lang="ts">
-	import SentimentScale from "../components/SentimentScale.svelte";
-	import type { Day } from "./api/_types";
+	import { onMount } from "svelte";
+	import authConfig from "../authConfig";
 
-	let error: string = null;
-	export let today, history: Day[];
+	const tokenStorageKey = "token";
 
-	function setSentiment(newToday: number) {
-		today = newToday;
+	let error: Error = null;
+	let token: string =
+		typeof window != "undefined" ? localStorage.getItem(tokenStorageKey) : null;
 
-		fetch("/api/sentiment", {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({ today })
-		}).then((res) => {
-			if (res.status != 200) {
-				error = "Failed to store";
-			} else {
-				error = null;
-			}
-		});
+	import createAuth0Client from "@auth0/auth0-spa-js";
+	import LoggedInHome from "../components/LoggedInHome.svelte";
+
+	let login: () => void;
+
+	async function initializeAuth0() {
+		const client = await createAuth0Client(authConfig);
+
+		login = async () => {
+			await client.loginWithRedirect({
+				redirect_uri: window.location.origin
+			});
+		};
+
+		const query = window.location.search;
+
+		if (query.includes("code=") && query.includes("state=")) {
+			await client.handleRedirectCallback();
+
+			token = await client.getTokenSilently();
+
+			localStorage.setItem(tokenStorageKey, token);
+
+			window.history.replaceState({}, document.title, "/");
+		}
 	}
+
+	onMount(initializeAuth0);
+
+	const onError = (e: Error) => {
+		error = e;
+	};
+
+	const onLoginExpired = () => {
+		token = null;
+		onError(new Error("Your session has expired. Please log in again."));
+	};
 </script>
 
 <style lang="scss">
@@ -42,12 +54,18 @@
 
 		.content {
 			margin: 0 auto;
-		}
 
-		.subtitle {
-			margin-top: 2em;
-			text-align: center;
-			font-weight: 700;
+			#login {
+				background-color: #328598;
+				color: white;
+				font-weight: 700;
+				border: none;
+				border-radius: 2px;
+
+				padding: 1em;
+				font-size: 1.2em;
+				cursor: pointer;
+			}
 		}
 	}
 
@@ -70,15 +88,11 @@
 <div class="container">
 	<div class="content">
 		{#if error}
-			<div class="error">{error}</div>
+			<div class="error">{error.message}</div>
 		{/if}
 
-		<div class="subtitle">How do you feel today?</div>
-
-		<SentimentScale value={today} valueSelected={setSentiment} />
-
-		<div class="subtitle">How you felt earlier</div>
-
-		<SentimentHistory {history} />
+		{#if token}
+			<LoggedInHome {token} {onError} {onLoginExpired} />
+		{:else}<button id="login" on:click={login}>Log in</button>{/if}
 	</div>
 </div>
