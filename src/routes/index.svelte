@@ -7,7 +7,7 @@
 
 	import LoggedInHome from "../components/LoggedInHome.svelte";
 
-	onMount(getAuthToken().then((newToken) => (token = newToken)));
+	onMount(() => getAuthToken().then((newToken) => (token = newToken)));
 
 	const onError = (e: Error) => {
 		error = e;

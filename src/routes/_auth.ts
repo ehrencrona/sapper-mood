@@ -7,7 +7,8 @@ let client: Promise<Auth0Client> = createAuth0Client(authConfig);
 
 export async function login() {
 	await (await client).loginWithRedirect({
-		redirect_uri: window.location.origin
+		redirect_uri: window.location.origin,
+		scope: 'openid email'
 	});
 }
 

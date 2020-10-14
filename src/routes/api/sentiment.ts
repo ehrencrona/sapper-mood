@@ -18,8 +18,7 @@ export async function get(req: ClientRequest, res: ServerResponse, next) {
 	res.end(
 		JSON.stringify({
 			today,
-			history: history,
-			user
+			history: history
 		})
 	);
 }
