@@ -1,12 +1,14 @@
 import type { ClientRequest, ServerResponse } from 'http';
 import { getSentimentHistory, storeSentiment } from '../../db';
 import { formatDate, getToday } from '../../date';
+import { getUserId } from './_getUserId';
 
 export async function get(req: ClientRequest, res: ServerResponse, next) {
 	res.setHeader('Content-Type', 'application/json');
+	const user = getUserId(req);
 
 	let today: number;
-	let history = await getSentimentHistory();
+	let history = await getSentimentHistory(user);
 
 	if (history.length && history[0].date == formatDate(getToday())) {
 		today = history[0].score;
@@ -16,7 +18,8 @@ export async function get(req: ClientRequest, res: ServerResponse, next) {
 	res.end(
 		JSON.stringify({
 			today,
-			history: history
+			history: history,
+			user
 		})
 	);
 }
@@ -32,7 +35,7 @@ export async function put(req: ClientRequest, res: ServerResponse, next) {
 
 	const { today: score } = await body;
 
-	await storeSentiment(score, getToday());
+	await storeSentiment(score, getToday(), getUserId(req));
 
 	res.end(JSON.stringify({}));
 }

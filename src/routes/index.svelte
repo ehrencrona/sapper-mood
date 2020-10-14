@@ -1,41 +1,13 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import authConfig from "../authConfig";
-
-	const tokenStorageKey = "token";
+	import { login, getAuthToken } from "./_auth";
 
 	let error: Error = null;
-	let token: string =
-		typeof window != "undefined" ? localStorage.getItem(tokenStorageKey) : null;
+	let token: string = null;
 
-	import createAuth0Client from "@auth0/auth0-spa-js";
 	import LoggedInHome from "../components/LoggedInHome.svelte";
 
-	let login: () => void;
-
-	async function initializeAuth0() {
-		const client = await createAuth0Client(authConfig);
-
-		login = async () => {
-			await client.loginWithRedirect({
-				redirect_uri: window.location.origin
-			});
-		};
-
-		const query = window.location.search;
-
-		if (query.includes("code=") && query.includes("state=")) {
-			await client.handleRedirectCallback();
-
-			token = await client.getTokenSilently();
-
-			localStorage.setItem(tokenStorageKey, token);
-
-			window.history.replaceState({}, document.title, "/");
-		}
-	}
-
-	onMount(initializeAuth0);
+	onMount(getAuthToken().then((newToken) => (token = newToken)));
 
 	const onError = (e: Error) => {
 		error = e;

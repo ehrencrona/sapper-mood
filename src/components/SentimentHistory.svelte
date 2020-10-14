@@ -1,4 +1,6 @@
 <script lang="ts">
+	// Shows previous days' mood.
+
 	import type { Day } from "../routes/api/_types";
 
 	export let history: Day[];

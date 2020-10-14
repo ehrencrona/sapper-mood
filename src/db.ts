@@ -18,24 +18,25 @@ export function getConnection(): Knex {
 	return connection;
 }
 
-export async function storeSentiment(score: number, date: Date) {
+export async function storeSentiment(score: number, date: Date, user: string) {
 	return upsert(
 		'sentiment',
 		['user', 'date'],
 		{
 			date,
 			score,
-			user: 4711
+			user
 		},
 		await getConnection()
 	);
 }
 
-export async function getSentimentHistory(): Promise<Day[]> {
+export async function getSentimentHistory(user: string): Promise<Day[]> {
 	return (
 		await getConnection()
 			.select('date', 'score')
 			.from('sentiment')
+			.where('user', user)
 			.orderBy('date', 'desc')
 	).map(({ date, score }) => ({
 		date: formatDate(date),

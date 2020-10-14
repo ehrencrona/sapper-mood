@@ -1,4 +1,6 @@
 <script lang="ts">
+	// This is what the user sees when logged in.
+
 	import { onMount } from "svelte";
 
 	import SentimentHistory from "../components/SentimentHistory.svelte";

@@ -1,4 +1,6 @@
 <script lang="ts">
+	// Allows rating today's mood.
+
 	export let value: number;
 	export let valueSelected: (value: number) => void;
 
