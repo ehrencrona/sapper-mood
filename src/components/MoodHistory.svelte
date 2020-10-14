@@ -39,14 +39,22 @@
 			}
 		}
 	}
+
+	.nodata {
+		margin-top: 0.8em;
+		text-align: center;
+	}
 </style>
 
-<ul>
-	{#each history as day}
-		<li>
-			<div class="date">{day.date}</div>
-			<div class="score">{scaleNames[day.score]}</div>
-		</li>
-	{/each}
-	{#if history.length == 0}You haven't reported your mood earlier days{/if}
-</ul>
+{#if history.length > 0}
+	<ul>
+		{#each history as day}
+			<li>
+				<div class="date">{day.date}</div>
+				<div class="score">{scaleNames[day.score]}</div>
+			</li>
+		{/each}
+	</ul>
+{:else}
+	<div class="nodata">You haven't reported your mood earlier days</div>
+{/if}
