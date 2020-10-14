@@ -53,7 +53,7 @@
 			} else {
 				onError(res.status != 200 ? new Error("Failed to store") : null);
 			}
-		});
+		}, onError);
 	};
 
 	const { session } = stores();
