@@ -6,5 +6,5 @@ export function formatDate(date: Date) {
 }
 
 export function getToday() {
-	return formatDate(new Date());
+	return new Date();
 }

@@ -1,6 +1,6 @@
 import type { ClientRequest, ServerResponse } from 'http';
 import { getSentimentHistory, storeSentiment } from '../../db';
-import { getToday } from '../../date';
+import { formatDate, getToday } from '../../date';
 
 export async function get(req: ClientRequest, res: ServerResponse, next) {
 	res.setHeader('Content-Type', 'application/json');
@@ -8,7 +8,7 @@ export async function get(req: ClientRequest, res: ServerResponse, next) {
 	let today: number;
 	let history = await getSentimentHistory();
 
-	if (history[0].date == getToday()) {
+	if (history[0].date == formatDate(getToday())) {
 		today = history[0].score;
 		history = history.slice(1);
 	}
