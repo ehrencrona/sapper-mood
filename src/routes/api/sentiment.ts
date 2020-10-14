@@ -8,7 +8,7 @@ export async function get(req: ClientRequest, res: ServerResponse, next) {
 	let today: number;
 	let history = await getSentimentHistory();
 
-	if (history[0].date == formatDate(getToday())) {
+	if (history.length && history[0].date == formatDate(getToday())) {
 		today = history[0].score;
 		history = history.slice(1);
 	}
