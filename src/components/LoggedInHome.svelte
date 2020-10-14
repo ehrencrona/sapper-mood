@@ -1,18 +1,18 @@
 <script lang="ts">
 	// This is what the user sees when logged in.
 
-	import SentimentHistory from "../components/SentimentHistory.svelte";
-	import SentimentScale from "../components/SentimentScale.svelte";
-	import type { Day } from "../routes/api/_types";
+	import MoodHistory from "../components/MoodHistory.svelte";
+	import MoodScale from "../components/MoodScale.svelte";
+	import type { Day } from "../types";
 
-	export let storeSentiment: (score: number) => void;
+	export let storeMood: (score: number) => void;
 	export let today: number;
 	export let history: Day[] = [];
 
-	function setSentiment(newToday: number) {
+	function setMood(newToday: number) {
 		today = newToday;
 
-		storeSentiment(today);
+		storeMood(today);
 	}
 </script>
 
@@ -46,11 +46,11 @@
 
 <div class="subtitle">How do you feel today?</div>
 
-<SentimentScale value={today} valueSelected={setSentiment} />
+<MoodScale value={today} valueSelected={setMood} />
 
 <div class="subtitle">How you felt earlier</div>
 
-<SentimentHistory {history} />
+<MoodHistory {history} />
 
 <div class="logout-container">
 	<hr /><a href="/logout">Log out</a>

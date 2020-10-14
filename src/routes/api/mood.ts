@@ -1,5 +1,5 @@
 import type { ClientRequest, ServerResponse } from 'http';
-import { getSentimentHistory, storeSentiment } from '../../db';
+import { getMoodHistory, storeMood } from '../../db';
 import { formatDate, getToday } from '../../date';
 import { getUserId } from './_getUserId';
 
@@ -8,7 +8,7 @@ export async function get(req: ClientRequest, res: ServerResponse, next) {
 	const user = getUserId(req);
 
 	let today: number;
-	let history = await getSentimentHistory(user);
+	let history = await getMoodHistory(user);
 
 	if (history.length && history[0].date == formatDate(getToday())) {
 		today = history[0].score;
@@ -34,7 +34,7 @@ export async function put(req: ClientRequest, res: ServerResponse, next) {
 
 	const { today: score } = await body;
 
-	await storeSentiment(score, getToday(), getUserId(req));
+	await storeMood(score, getToday(), getUserId(req));
 
 	res.end(JSON.stringify({}));
 }

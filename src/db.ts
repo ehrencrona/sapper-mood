@@ -1,10 +1,11 @@
 import * as Knex from 'knex';
 import { formatDate } from './date';
-import upsert from './routes/api/upsert';
-import type { Day } from './routes/api/_types';
+import upsert from './upsert';
+import type { Day } from './types';
 import knexfile from '../knexfile';
 
 let connection: Knex;
+const tableName = 'mood';
 
 export async function connectToDb() {
 	connection = Knex.default(
@@ -18,9 +19,9 @@ export function getConnection(): Knex {
 	return connection;
 }
 
-export async function storeSentiment(score: number, date: Date, user: string) {
+export async function storeMood(score: number, date: Date, user: string) {
 	return upsert(
-		'sentiment',
+		tableName,
 		['user', 'date'],
 		{
 			date,
@@ -31,11 +32,11 @@ export async function storeSentiment(score: number, date: Date, user: string) {
 	);
 }
 
-export async function getSentimentHistory(user: string): Promise<Day[]> {
+export async function getMoodHistory(user: string): Promise<Day[]> {
 	return (
 		await getConnection()
 			.select('date', 'score')
-			.from('sentiment')
+			.from(tableName)
 			.where('user', user)
 			.orderBy('date', 'desc')
 	).map(({ date, score }) => ({

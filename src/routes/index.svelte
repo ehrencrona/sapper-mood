@@ -6,7 +6,7 @@
 		let error: Error = null;
 
 		try {
-			const res = await this.fetch(`/api/sentiment`);
+			const res = await this.fetch(`/api/mood`);
 
 			if (res.status == 200) {
 				({ today, history } = await res.json());
@@ -24,7 +24,7 @@
 <script lang="ts">
 	import LoggedInHome from "../components/LoggedInHome.svelte";
 	import { stores } from "@sapper/app";
-	import type { Day } from "./api/_types";
+	import type { Day } from "../types";
 
 	export let today: number;
 	export let history: Day[];
@@ -40,13 +40,13 @@
 		onError(new Error("Your session has expired. Please log in again."));
 	};
 
-	const storeSentiment = (sentiment: number) => {
-		fetch("/api/sentiment", {
+	const storeMood = (score: number) => {
+		fetch("/api/mood", {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json"
 			},
-			body: JSON.stringify({ today: sentiment })
+			body: JSON.stringify({ today: score })
 		}).then((res) => {
 			if (res.status == 401) {
 				onLoginExpired();
@@ -94,7 +94,7 @@
 </style>
 
 <svelte:head>
-	<title>Sentiment</title>
+	<title>Mood Tracker</title>
 </svelte:head>
 
 <div class="container">
@@ -104,7 +104,7 @@
 		{/if}
 
 		{#if $session.user && !sessionExpired}
-			<LoggedInHome {storeSentiment} {today} {history} />
+			<LoggedInHome {storeMood} {today} {history} />
 		{:else}
 			<button
 				id="login"
