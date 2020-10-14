@@ -1,22 +1,62 @@
+<script context="module" lang="ts">
+	export async function preload() {
+		let today: number;
+		let history: Day[];
+		let sessionExpired = false;
+		let error: Error = null;
+
+		try {
+			const res = await this.fetch(`/api/sentiment`);
+
+			if (res.status == 200) {
+				({ today, history } = await res.json());
+			} else if (res.status === 401) {
+				sessionExpired = true;
+			}
+		} catch (e) {
+			error = e;
+		}
+
+		return { today, history, sessionExpired, error };
+	}
+</script>
+
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { login, getAuthToken } from "./_auth";
-
-	let error: Error = null;
-	let token: string = null;
-
 	import LoggedInHome from "../components/LoggedInHome.svelte";
+	import { stores } from "@sapper/app";
+	import type { Day } from "./api/_types";
 
-	onMount(() => getAuthToken().then((newToken) => (token = newToken)));
+	export let today: number;
+	export let history: Day[];
+	export let sessionExpired: boolean;
+	export let error: Error = null;
 
 	const onError = (e: Error) => {
 		error = e;
 	};
 
 	const onLoginExpired = () => {
-		token = null;
+		sessionExpired = true;
 		onError(new Error("Your session has expired. Please log in again."));
 	};
+
+	const storeSentiment = (sentiment: number) => {
+		fetch("/api/sentiment", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({ today: sentiment })
+		}).then((res) => {
+			if (res.status == 401) {
+				onLoginExpired();
+			} else {
+				onError(res.status != 200 ? new Error("Failed to store") : null);
+			}
+		});
+	};
+
+	const { session } = stores();
 </script>
 
 <style lang="scss">
@@ -63,8 +103,12 @@
 			<div class="error">{error.message}</div>
 		{/if}
 
-		{#if token}
-			<LoggedInHome {token} {onError} {onLoginExpired} />
-		{:else}<button id="login" on:click={login}>Log in</button>{/if}
+		{#if $session.user && !sessionExpired}
+			<LoggedInHome {storeSentiment} {today} {history} />
+		{:else}
+			<button
+				id="login"
+				on:click={() => (document.location.href = '/login')}>Log in</button>
+		{/if}
 	</div>
 </div>

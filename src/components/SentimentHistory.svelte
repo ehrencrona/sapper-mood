@@ -12,6 +12,7 @@
 	ul {
 		display: flex;
 		justify-content: center;
+		padding-left: 0;
 
 		li {
 			text-align: center;

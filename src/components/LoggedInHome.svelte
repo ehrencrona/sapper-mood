@@ -1,53 +1,18 @@
 <script lang="ts">
 	// This is what the user sees when logged in.
 
-	import { onMount } from "svelte";
-
 	import SentimentHistory from "../components/SentimentHistory.svelte";
 	import SentimentScale from "../components/SentimentScale.svelte";
 	import type { Day } from "../routes/api/_types";
 
-	export let token: string;
-	export let onError: (e: Error) => void;
-  export let onLoginExpired: () => void;
-    
-	export let today,
-		history: Day[] = [];
-
-	async function getSentiment() {
-		try {
-			const res = await fetch(`/api/sentiment`, {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
-
-			if (res.status == 200) {
-				({ today, history } = await res.json());
-      }
-      else if (res.status === 401) {
-        onLoginExpired()
-      }
-		} catch (e) {
-			onError(e);
-		}
-	}
-
-	onMount(getSentiment);
+	export let storeSentiment: (score: number) => void;
+	export let today: number;
+	export let history: Day[] = [];
 
 	function setSentiment(newToday: number) {
 		today = newToday;
 
-		fetch("/api/sentiment", {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`
-			},
-			body: JSON.stringify({ today })
-		}).then((res) => {
-			onError(res.status != 200?new Error("Failed to store"): null);
-		});
+		storeSentiment(today);
 	}
 </script>
 
@@ -56,6 +21,26 @@
 		margin-top: 2em;
 		text-align: center;
 		font-weight: 700;
+	}
+
+	.logout-container {
+		$color: #c0c0c0;
+
+		hr {
+			width: 4em;
+			margin-bottom: 0.6em;
+			border-top: none;
+			border-bottom-color: $color;
+		}
+
+		a {
+			text-decoration: none;
+			font-size: 0.8em;
+		}
+
+		margin-top: 4em;
+		text-align: center;
+		color: $color;
 	}
 </style>
 
@@ -66,3 +51,7 @@
 <div class="subtitle">How you felt earlier</div>
 
 <SentimentHistory {history} />
+
+<div class="logout-container">
+	<hr /><a href="/logout">Log out</a>
+</div>
