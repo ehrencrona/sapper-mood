@@ -1,6 +1,6 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "Sapper-mood",
+  "description": "A trivial mood tracker app showing how to integrate Svelte, Sapper, Auth0 and Knex.",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",

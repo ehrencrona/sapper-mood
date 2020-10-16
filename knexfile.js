@@ -1,4 +1,5 @@
-// Update with your config settings.
+// Postgres connection settings. 
+// Do not check in files containing passwords.
 
 module.exports = {
 
@@ -13,6 +14,8 @@ module.exports = {
 
   production: {
     client: 'postgresql',
+    // This environment variable is exposed by Heroku Postgres. 
+    // If you deploy in a different environment, it needs replacing.
     connection: process.env.DATABASE_URL,
     ssl: {
       rejectUnauthorized: false
