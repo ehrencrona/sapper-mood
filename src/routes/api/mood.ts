@@ -1,9 +1,9 @@
-import type { ClientRequest, ServerResponse } from 'http';
+import type { IncomingMessage, ServerResponse } from 'http';
 import { getMoodHistory, storeMood } from '../../db';
 import { formatDate, getToday } from '../../date';
 import { getUserId } from './_getUserId';
 
-export async function get(req: ClientRequest, res: ServerResponse, next) {
+export async function get(req: IncomingMessage, res: ServerResponse, next) {
 	res.setHeader('Content-Type', 'application/json');
 	const user = getUserId(req);
 
@@ -23,7 +23,7 @@ export async function get(req: ClientRequest, res: ServerResponse, next) {
 	);
 }
 
-export async function put(req: ClientRequest, res: ServerResponse, next) {
+export async function put(req: IncomingMessage, res: ServerResponse, next) {
 	res.setHeader('Content-Type', 'application/json');
 
 	const body = new Promise<any>((resolve) => {

@@ -1,5 +1,6 @@
 // Postgres connection settings. 
 // Do not check in files containing passwords.
+// See http://knexjs.org/#knexfile
 
 module.exports = {
 

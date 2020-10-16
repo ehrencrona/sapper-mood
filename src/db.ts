@@ -7,7 +7,7 @@ import knexfile from '../knexfile';
 let connection: Knex;
 const tableName = 'mood';
 
-export async function connectToDb() {
+export function connectToDb() {
 	connection = Knex.default(
 		process.env.NODE_ENV === 'production'
 			? knexfile.production

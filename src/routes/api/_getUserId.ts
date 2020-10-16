@@ -1,6 +1,6 @@
-import type { ClientRequest } from 'http';
+import type { IncomingMessage } from 'http';
 
-export function getUserId(req: ClientRequest) {
+export function getUserId(req: IncomingMessage) {
 	const user = req['oidc'].user;
 
 	if (!user) {
