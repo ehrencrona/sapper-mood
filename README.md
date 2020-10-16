@@ -8,17 +8,17 @@ Showing off how minimalist Svelte is, the entire uncompressed JavaScript payload
 
 The frontend can be tried on https://quiet-anchorage-27575.herokuapp.com/
 
-** Configuration **
+## Configuration
 
 * Configure your Auth0 settings and your base URL in [authConfig.ts](src/authConfig.ts).
 * Configure your SQL connection [knexfile.js](./knexfile.js).
 
-** Auth0 **
+## Auth0
 
 Create an Auth0 application ("Regular Web Application"), configuring the Allowed Callback URL (to `http://<domain>/callback`), the Allowed Logout URL (to `http://<domain>`) and the Allowed Web Origin (to `http://<domain>`). Separate multiple values by commas.
 
 Basic Auth0 setup lifted from https://enzy.org/blog/integrating-auth0-with-sapper/
 
-** Heroku **
+## Heroku
 
 It is very easy to deploy on a free Heroku tier. Just create a Heroku Postgres service and push it to Heroku.
